@@ -1,0 +1,44 @@
+.global _start
+.data
+message: .asciz "Enter a message : "
+input: .skip 1024
+ecrypted: .skip 1024
+index: .quad 0
+.text
+
+_start:
+movq $1, %rax
+movq $1, %rdi
+movq $message, %rsi
+movq $18, %rdx;
+syscall
+
+movq $0, %rax
+movq $0, %rdi
+movq $input, %rsi
+movq $40, %rdx;
+syscall
+
+movq input, %rbx
+
+encrypt:
+movb (%rbx), %bl
+addb $72, %bl
+movb %bl, %rbx 
+movq $1, %rbx
+dec %rax
+jnz encrypt
+ret
+
+movq $input, %rdi
+movq %rbx, (%rdi)
+
+xorq %rax, %rax
+xorq %rdi, %rdi
+movq $input, %rsi
+movq $1024, %rdx
+syscall
+
+movq $0, %rdi
+movq $60, %rax
+syscall
